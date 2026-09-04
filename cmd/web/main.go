@@ -4,6 +4,9 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"time"
+
+	"forum/cmd/web/handlers"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -17,11 +20,13 @@ func main() {
 	defer db.Close()
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/logic", LoginHandler)
+	mux.HandleFunc("/login", handlers.LoginHandler)
 
 	server := &http.Server{
-		Addr:    ":4000",
-		Handler: mux,
+		Addr:         ":8080",
+		Handler:      mux,
+		ReadTimeout:  5 * time.Second,  // no default timeout for super slow requests that
+		WriteTimeout: 10 * time.Second, // could hold connections open indefinitely
 	}
 
 	err = server.ListenAndServe()
