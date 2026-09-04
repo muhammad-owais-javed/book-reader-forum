@@ -2,8 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
+	"net/http"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -16,6 +16,15 @@ func main() {
 	}
 	defer db.Close()
 
-	fmt.Println("R")
+	mux := http.NewServeMux()
+	mux.HandleFunc("/logic", LoginHandler)
+
+	server := &http.Server{
+		Addr:    ":4000",
+		Handler: mux,
+	}
+
+	err = server.ListenAndServe()
+	log.Fatal(err)
 
 }
