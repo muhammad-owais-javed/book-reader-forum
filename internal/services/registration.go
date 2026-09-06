@@ -55,7 +55,5 @@ func Register(ctx context.Context, tx *sql.Tx, username, email, password string)
 		return
 	}
 
-	tx.Commit()
-
 	return nil
 }

@@ -56,6 +56,8 @@ func (app *Application) RegistrationHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	tx.Commit()
+
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 
 }

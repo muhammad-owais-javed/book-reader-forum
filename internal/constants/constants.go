@@ -2,7 +2,7 @@ package constants
 
 const MinUsernameLength = 3
 const MinPasswordLength = 12
-const SessionExpiry = 24
+const SessionExpiry = 1440 // minutes until session expires
 
 // ------- users table ---------
 const CheckUniqueEmail = "SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)"
@@ -11,4 +11,5 @@ const CreateUser = "INSERT INTO users (id, username, email, password_hash) VALUE
 const GetUserIDAndPasswordByEmail = "SELECT id, password_hash FROM users WHERE email = ?"
 
 // ------- sessions table ---------
-const AddSession = "INSERT INTO sessions (uuid, user_id, expires_at) VALUES (?, ?, ?)"
+const AddSession = "INSERT INTO sessions (id, user_id, expires_at) VALUES (?, ?, ?)" // expires_at syntax: YYYY-MM-DD HH:MM:SS
+const GetExpiryTime = "SELECT expires_at FROM sessions WHERE id = ?"

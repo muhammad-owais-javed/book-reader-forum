@@ -1,4 +1,4 @@
-package pages
+package handlers
 
 import (
 	"forum/cmd/web/apperrors"
@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
+func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 
-	tmpl, err := template.ParseFiles("ui/html/login.html")
+	tmpl, err := template.ParseFiles("ui/html/register.html")
 	if err != nil {
 		apperrors.ServerError(w, err)
 		return

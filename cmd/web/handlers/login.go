@@ -6,7 +6,6 @@ import (
 	"forum/cmd/web/apperrors"
 	"forum/internal/constants"
 	"forum/internal/services"
-	"forum/internal/uuid"
 	"net/http"
 	"net/mail"
 	"time"
@@ -49,16 +48,20 @@ func (app *Application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// ------ UUID creation --------
-	UUID, err := uuid.NewUUID()
+	// ------ session creation --------
+	UUID, err := services.CreateSession(ctx, tx, userID)
 	if err != nil {
 		apperrors.ServerError(w, err)
 		return
 	}
 
-	// ------ Session creation --------
-	_, _ = userID, UUID
-	// sessions table needs to be created
-	// http.SetCookie with UUID as the value
+	http.SetCookie(w, &http.Cookie{
+		Name:  "session_id",
+		Value: UUID,
+	})
+
+	tx.Commit()
+
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
 
 }
