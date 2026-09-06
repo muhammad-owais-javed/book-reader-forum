@@ -26,7 +26,6 @@ func Register(ctx context.Context, tx *sql.Tx, username, email, password string)
 	if emailExistsAlready {
 		return ErrEmailExists
 	}
-
 	// ---- username check -------
 	var usernameExistsAlready bool
 	err = tx.QueryRowContext(ctx, constants.CheckUniqueUserName, username).Scan(&usernameExistsAlready)
