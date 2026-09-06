@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func newUUID() (string, error) {
+func NewUUID() (string, error) {
 	b := make([]byte, 16)
 	if _, err := rand.Read(b); err != nil {
 		return "", err
