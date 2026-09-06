@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"errors"
+	"fmt"
 	"forum/cmd/web/apperrors"
 	"forum/internal/constants"
 	"forum/internal/services"
@@ -36,6 +37,7 @@ func (app *Application) RegistrationHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	err = app.Registration.Register(ctx, username, email.Address, password)
+	fmt.Println(err)
 	if err != nil {
 		if errors.Is(err, services.ErrEmailExists) {
 			apperrors.ClientError(w, "email exists")
