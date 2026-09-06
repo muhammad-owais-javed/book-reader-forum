@@ -8,8 +8,6 @@ import (
 	"time"
 
 	"forum/cmd/web/handlers"
-	"forum/internal/repositories"
-	"forum/internal/services"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -33,6 +31,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	//
 	// ----- just to temporarily check what is inside the db -----
 	//rows, _ := db.Query("SELECT * FROM users") //--
 	//defer rows.Close()                         //--
@@ -42,17 +41,9 @@ func main() {
 	//	fmt.Println(id, username, email, passwordHash)         //--
 	//} //--
 	// ----- just to temporarily check what is inside the db -----
+	//
 
-	// -- repos --
-	userRepository := &repositories.UserRepository{DB: db}
-	// -- services --
-	registrationService := &services.RegistrationService{Repository: userRepository}
-	authService := &services.AuthService{Repository: userRepository}
-
-	app := &handlers.Application{
-		Auth:         authService,
-		Registration: registrationService,
-	}
+	app := &handlers.Application{DB: db}
 
 	mux := app.Routes()
 

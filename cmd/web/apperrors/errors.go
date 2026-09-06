@@ -37,6 +37,12 @@ func WriteClientError(errorName string) (string, int) {
 	case "username exists":
 		return "Error: The provided username is already in use.", http.StatusConflict
 
+	case "email doesnt exist":
+		return "Error: There is no user with the provided email address.", http.StatusBadRequest
+
+	case "wrong password":
+		return "Error: The provided password is incorrect.", http.StatusBadRequest
+
 	case "unauthorized":
 		return http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized
 
