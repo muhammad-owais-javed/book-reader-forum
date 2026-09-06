@@ -5,20 +5,30 @@ import (
 	"net/http"
 )
 
-// global error handling for bad request of different forms
-func clientError(w http.ResponseWriter, status string) {
+// global error handling for bad requests of different kind
+func clientError(w http.ResponseWriter, errorName string) {
 
-	switch status {
+	errorMessage, statusCode := writeClientError(errorName)
+	http.Error(w, errorMessage, statusCode)
+
+}
+
+// writes the error message and status code depending which error it receives
+func writeClientError(errorName string) (string, int) {
+
+	switch errorName {
 	case "bad request":
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return http.StatusText(http.StatusBadRequest), http.StatusBadRequest
 	case "invalid email":
-		http.Error(w, "Error: Invalid email provided.", http.StatusBadRequest)
+		return "Error: Invalid email provided.", http.StatusBadRequest
 	case "unauthorized":
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized
 
 	default:
 		log.Println("We should not have gotten here.")
+		return "", 0
 	}
+
 }
 
 // global error handling for server side issues
