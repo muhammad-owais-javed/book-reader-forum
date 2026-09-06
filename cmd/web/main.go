@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -32,6 +33,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// --------- just to check what is inside ------------------
+	rows, _ := db.Query("SELECT * FROM users")
+	defer rows.Close()
+	for rows.Next() {
+		var id, username, email, passwordHash string
+		err = rows.Scan(&id, &username, &email, &passwordHash)
+		fmt.Println(id, username, email, passwordHash)
+	}
+	// --------- just to check what is inside ------------------
 
 	// -- repos --
 	userRepository := &repositories.UserRepository{DB: db}
