@@ -11,7 +11,7 @@ func NewUUID() (string, error) {
 		return "", err
 	}
 
-	b[6] = (b[6] & 0xf) | 0x40
+	b[6] = (b[6] & 0xf) | 0x40 // naming this version 4 UUID inside the UUID
 	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:16]), nil
 
 }
