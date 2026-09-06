@@ -48,4 +48,6 @@ func (app *Application) RegistrationHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+
 }
