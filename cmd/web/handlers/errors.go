@@ -6,13 +6,16 @@ import (
 )
 
 // global error handling for bad request of different forms
-func clientError(w http.ResponseWriter, status int) {
+func clientError(w http.ResponseWriter, status string) {
 
 	switch status {
-	case 400:
+	case "bad request":
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-	case 401:
+	case "invalid email":
+		http.Error(w, "Error: Invalid email provided.", http.StatusBadRequest)
+	case "unauthorized":
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+
 	default:
 		log.Println("We should not have gotten here.")
 	}
