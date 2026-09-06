@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"forum/cmd/web/handlers"
-	"forum/internal/repositories"
-	"forum/internal/services"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -44,19 +42,7 @@ func main() {
 	} //--
 	// ----- just to temporarily check what is inside the db -----
 
-	// -- repos --
-	userRepository := &repositories.UserRepository{DB: db}
-	sessionRepository := &repositories.SessionRepository{DB: db}
-	// -- services --
-	registrationService := &services.RegistrationService{Repository: userRepository}
-	authService := &services.AuthService{Repository: userRepository}
-	sessionService := &services.SessionService{Repository: sessionRepository}
-
-	app := &handlers.Application{
-		Auth:         authService,
-		Registration: registrationService,
-		Session:      sessionService,
-	}
+	app := &handlers.Application{DB: db}
 
 	mux := app.Routes()
 
