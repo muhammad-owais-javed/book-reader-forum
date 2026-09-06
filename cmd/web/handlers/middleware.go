@@ -11,5 +11,6 @@ func withTimeout(w http.ResponseWriter, r *http.Request, handler http.HandlerFun
 
 	ctx, cancel := context.WithTimeout(r.Context(), 1*time.Second)
 	defer cancel()
-	handler(w, r.WithContext(ctx))
+
+	handler(w, r.WithContext(ctx)) // calling the handler that was passed, but with context
 }

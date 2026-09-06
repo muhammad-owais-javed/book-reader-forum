@@ -9,7 +9,6 @@ func (app *Application) Routes() *http.ServeMux {
 	mux.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		withTimeout(w, r, app.RegistrationHandler)
 	})
-
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		withTimeout(w, r, app.LoginHandler)
 	})
