@@ -16,12 +16,6 @@ var ErrUsernameExists = errors.New("username already exists")
 // Registers a new user into the database or returns and error if username has been taken or email has already been registered.
 func Register(ctx context.Context, tx *sql.Tx, username, email, password string) (err error) {
 
-	tx, err := r.Repository.DB.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
 	// ---- email check -------
 	var emailExistsAlready bool
 	err = tx.QueryRowContext(ctx, constants.CheckUniqueEmail, email).Scan(&emailExistsAlready)
