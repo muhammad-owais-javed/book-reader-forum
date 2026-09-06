@@ -46,13 +46,16 @@ func main() {
 
 	// -- repos --
 	userRepository := &repositories.UserRepository{DB: db}
+	sessionRepository := &repositories.SessionRepository{DB: db}
 	// -- services --
 	registrationService := &services.RegistrationService{Repository: userRepository}
 	authService := &services.AuthService{Repository: userRepository}
+	sessionService := &services.SessionService{Repository: sessionRepository}
 
 	app := &handlers.Application{
 		Auth:         authService,
 		Registration: registrationService,
+		Session:      sessionService,
 	}
 
 	mux := app.Routes()
