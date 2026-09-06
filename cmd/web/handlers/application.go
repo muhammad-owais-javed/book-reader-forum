@@ -1,8 +1,9 @@
 package handlers
 
-import "forum/internal/services"
+import (
+	"database/sql"
+)
 
 type Application struct {
-	Auth         *services.AuthService
-	Registration *services.RegistrationService
+	DB *sql.DB
 }
