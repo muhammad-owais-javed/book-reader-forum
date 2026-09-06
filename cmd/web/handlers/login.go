@@ -16,11 +16,11 @@ func (app *Application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	email, err := mail.ParseAddress(r.PostFormValue("email"))
 	if err != nil {
-		clientError(w, "invalid email")
+		ClientError(w, "invalid email")
 	}
 	password := r.PostFormValue("password")
 	if utf8.RuneCountInString(password) < constants.MinPasswordLength {
-		clientError(w, "too short password")
+		ClientError(w, "too short password")
 		return
 	}
 

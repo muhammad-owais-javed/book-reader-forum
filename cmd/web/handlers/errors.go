@@ -8,15 +8,15 @@ import (
 )
 
 // global error handling for bad requests of different kind
-func clientError(w http.ResponseWriter, errorName string) {
+func ClientError(w http.ResponseWriter, errorName string) {
 
-	errorMessage, statusCode := writeClientError(errorName)
+	errorMessage, statusCode := WriteClientError(errorName)
 	http.Error(w, errorMessage, statusCode)
 
 }
 
 // writes the error message and status code depending which error it receives
-func writeClientError(errorName string) (string, int) {
+func WriteClientError(errorName string) (string, int) {
 
 	switch errorName {
 	case "bad request":
@@ -48,7 +48,7 @@ func writeClientError(errorName string) (string, int) {
 }
 
 // global error handling for server side issues
-func serverError(w http.ResponseWriter, err error) {
+func ServerError(w http.ResponseWriter, err error) {
 
 	log.Println(err)
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
