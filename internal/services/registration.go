@@ -39,7 +39,7 @@ func (r *RegistrationService) Register(ctx context.Context, username, email, pas
 
 	// ---- username check -------
 	var usernameExistsAlready bool
-	err = tx.QueryRowContext(ctx, constants.CheckUniqueUserName, email).Scan(&usernameExistsAlready)
+	err = tx.QueryRowContext(ctx, constants.CheckUniqueUserName, username).Scan(&usernameExistsAlready)
 	if err != nil {
 		return err
 	}
