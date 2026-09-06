@@ -40,8 +40,8 @@ func main() {
 	authService := &services.AuthService{Repository: userRepository}
 
 	app := &handlers.Application{
-		Auth:     authService,
-		Register: registrationService,
+		Auth:         authService,
+		Registration: registrationService,
 	}
 
 	mux := app.Routes()
