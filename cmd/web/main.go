@@ -34,15 +34,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// --------- just to check what is inside ------------------
-	rows, _ := db.Query("SELECT * FROM users")
-	defer rows.Close()
-	for rows.Next() {
-		var id, username, email, passwordHash string
-		err = rows.Scan(&id, &username, &email, &passwordHash)
-		fmt.Println(id, username, email, passwordHash)
-	}
-	// --------- just to check what is inside ------------------
+	// ----- just to temporarily check what is inside the db -----
+	rows, _ := db.Query("SELECT * FROM users") //--
+	defer rows.Close()                         //--
+	for rows.Next() {                          //--
+		var id, username, email, passwordHash string           //--
+		err = rows.Scan(&id, &username, &email, &passwordHash) //--
+		fmt.Println(id, username, email, passwordHash)         //--
+	} //--
+	// ----- just to temporarily check what is inside the db -----
 
 	// -- repos --
 	userRepository := &repositories.UserRepository{DB: db}
