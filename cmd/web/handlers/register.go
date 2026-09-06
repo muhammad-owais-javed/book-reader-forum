@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"errors"
+	"forum/cmd/web/apperrors"
 	"forum/internal/constants"
 	"forum/internal/services"
 	"net/http"
@@ -18,32 +19,32 @@ func (app *Application) RegistrationHandler(w http.ResponseWriter, r *http.Reque
 
 	username := r.PostFormValue("username")
 	if utf8.RuneCountInString(username) < constants.MinUsernameLength {
-		clientError(w, "too short username")
+		apperrors.ClientError(w, "too short username")
 		return
 	}
 
 	email, err := mail.ParseAddress(r.PostFormValue("email"))
 	if err != nil {
-		clientError(w, "invalid email")
+		apperrors.ClientError(w, "invalid email")
 		return
 	}
 
 	password := r.PostFormValue("password")
 	if utf8.RuneCountInString(password) < constants.MinPasswordLength {
-		clientError(w, "too short password")
+		apperrors.ClientError(w, "too short password")
 		return
 	}
 
 	err = app.Registration.Register(ctx, username, email.Address, password)
 	if err != nil {
 		if errors.Is(err, services.ErrEmailExists) {
-			clientError(w, "email exists")
+			apperrors.ClientError(w, "email exists")
 			return
 		} else if errors.Is(err, services.ErrUsernameExists) {
-			clientError(w, "username exists")
+			apperrors.ClientError(w, "username exists")
 			return
 		}
-		serverError(w, err)
+		apperrors.ServerError(w, err)
 		return
 	}
 

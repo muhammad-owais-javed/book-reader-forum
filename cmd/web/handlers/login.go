@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"forum/cmd/web/apperrors"
 	"forum/internal/constants"
 	"net/http"
 	"net/mail"
@@ -16,11 +17,11 @@ func (app *Application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	email, err := mail.ParseAddress(r.PostFormValue("email"))
 	if err != nil {
-		ClientError(w, "invalid email")
+		apperrors.ClientError(w, "invalid email")
 	}
 	password := r.PostFormValue("password")
 	if utf8.RuneCountInString(password) < constants.MinPasswordLength {
-		ClientError(w, "too short password")
+		apperrors.ClientError(w, "too short password")
 		return
 	}
 
