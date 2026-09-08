@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"forum/internal/constants"
 	"golang.org/x/crypto/bcrypt"
 )
 
