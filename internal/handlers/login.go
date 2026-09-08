@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"errors"
-	"forum/cmd/web/apperrors"
+	"forum/internal/errors"
 	"forum/internal/constants"
 	"forum/internal/services"
 	"net/http"

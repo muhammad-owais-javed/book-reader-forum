@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	"forum/cmd/web/apperrors"
+	"forum/internal/errors"
 	"forum/internal/services"
 	"net/http"
 	"time"
