@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"forum/internal/repository"
+	"forum/internal/services"
 	"forum/internal/handlers"
 	"forum/internal/database"
 
@@ -34,7 +36,13 @@ func main() {
 	// ----- just to temporarily check what is inside the db -----
 	//
 
-	app := &handlers.Application{DB: db}
+	userRepo := repository.NewUserRepository(db)
+	userService := services.NewUserService(userRepo)
+
+	app := &handlers.Application{
+		DB: db,
+		UserService: userService,
+	}
 
 	mux := app.Routes()
 
