@@ -1,6 +1,7 @@
+-- Users Table
+-- NOTES:
 -- for users, we use UUID to increase security and privacy
 -- the tradeoff is that TEXT comparisons instead of INTEGER comparisons of foreign keys in join tables are minimally slower
-
 CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
@@ -8,12 +9,14 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT NOT NULL
 );
 
+
+-- Sessions Table
+-- NOTES:
 -- DATETIME in sessions table only signals intent, still takes any TEXT
 -- YYYY-MM-DD HH:MM:SS time syntax is not enforced on db level, just suggested through naming
-
 CREATE TABLE IF NOT EXISTS sessions (
     id TEXT PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id TEXT NOT NULL,
     expires_at DATETIME NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
