@@ -37,3 +37,12 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *models.User) erro
 
 	return err
 }
+
+func (r *UserRepository) GetUserCredentialsByEmail(ctx context.Context, email string) (string, string, error) {
+	
+	var userID, hashedPassword string
+	
+	err := r.DB.QueryRowContext(ctx, constants.GetUserIDAndPasswordByEmail, email).Scan(&userID, &hashedPassword)
+	
+	return userID, hashedPassword, err
+}
