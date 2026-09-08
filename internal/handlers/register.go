@@ -43,7 +43,7 @@ func (app *Application) RegistrationHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	// ------ registration --------
-	err = services.Register(ctx, tx, username, email.Address, password)
+	err = app.UserService.Register(ctx, username, email.Address, password)
 	if err != nil {
 		if errors.Is(err, services.ErrEmailExists) {
 			apperrors.ClientError(w, "email exists")
