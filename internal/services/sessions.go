@@ -49,11 +49,11 @@ func ValidateSession(ctx context.Context, tx *sql.Tx, sessionID string) (bool, e
 	
 	expiresAt, err := s.repo.GetSessionExpiry(ctx, sessionID)
 
-	if errors.Is(err, sql.ErrNoRows) {
-		return false, nil
-	}
 	if err != nil {
-		return false, err
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil 
+		}
+		return false, err 
 	}
 
 	expiry, err := time.Parse(time.RFC3339, expiresAt) // expiresAt is stored in YYYY-MM-DD HH:MM:SS format but Scan reads it to RCF3339
