@@ -35,7 +35,7 @@ func (app *Application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ------ login --------
-	userID, err := services.Authenticate(ctx, tx, email.Address, password)
+	userID, err := app.UserService.Authenticate(ctx, email.Address, password)
 	if err != nil {
 		if errors.Is(err, services.ErrEmailDoesntExist) {
 			apperrors.ClientError(w, "email doesnt exist")
