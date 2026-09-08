@@ -42,7 +42,7 @@ func (s *SessionService) CreateSession(ctx context.Context, userID string) (stri
 }
 
 // validates that a given session id has a valid session in the db that has not expired, returns bool
-func ValidateSession(ctx context.Context, tx *sql.Tx, sessionID string) (bool, error) {
+func (s *SessionService) ValidateSession(ctx context.Context, sessionID string) (bool, error) {
 
 	// var expiresAt string
 	// err := tx.QueryRowContext(ctx, constants.GetExpiryTime, sessionID).Scan(&expiresAt)
