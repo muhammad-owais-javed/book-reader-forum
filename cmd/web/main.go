@@ -14,22 +14,13 @@ import (
 
 func main() {
 
-	db, err := sql.Open("sqlite3", "./app.db")
+	db, err := database.InitDB("./app.db", "./schema.sql")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf(">> ERROR: Database initialization failed: %v", err)
 	}
 	defer db.Close()
 
-	schema, err := os.ReadFile("schema.sql")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	//creating the tables
-	_, err = db.Exec(string(schema))
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Println(">> INFO: Connection to Database Established!")
 
 	//
 	// ----- just to temporarily check what is inside the db -----
