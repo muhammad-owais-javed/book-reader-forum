@@ -38,10 +38,13 @@ func main() {
 
 	userRepo := repository.NewUserRepository(db)
 	userService := services.NewUserService(userRepo)
+	sessionRepo := repository.NewSessionRepository(db)
+	sessionService := services.NewSessionService(sessionRepo)
 
 	app := &handlers.Application{
 		DB: db,
 		UserService: userService,
+		SessionService: sessionService, 
 	}
 
 	mux := app.Routes()
