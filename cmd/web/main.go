@@ -1,13 +1,13 @@
 package main
 
 import (
-	"database/sql"
+
 	"log"
 	"net/http"
-	"os"
 	"time"
 
-	"forum/cmd/web/handlers"
+	"forum/internal/handlers"
+	"forum/internal/database"
 
 	_ "github.com/mattn/go-sqlite3"
 )
