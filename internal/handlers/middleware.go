@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"forum/internal/errors"
-	"forum/internal/services"
 	"net/http"
 	"time"
 )
@@ -38,7 +37,7 @@ func withAuthentication(w http.ResponseWriter, r *http.Request, handler http.Han
 	}
 	sessionID := cookie.Value
 
-	validSession, err := services.ValidateSession(ctx, tx, sessionID)
+	validSession, err := app.SessionService.ValidateSession(ctx, sessionID)
 	if err != nil {
 		apperrors.ServerError(w, err)
 		return

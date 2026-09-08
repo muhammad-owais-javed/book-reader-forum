@@ -49,7 +49,7 @@ func (app *Application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ------ session creation --------
-	UUID, err := services.CreateSession(ctx, tx, userID)
+	UUID, err := app.SessionService.CreateSession(ctx, userID)
 	if err != nil {
 		apperrors.ServerError(w, err)
 		return
