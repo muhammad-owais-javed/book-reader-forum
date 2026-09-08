@@ -22,3 +22,9 @@ func (r *UserRepository) CheckEmailExists(ctx context.Context, email string) (bo
 	return exists, err
 
 }
+
+func (r *UserRepository) CheckUsernameExists(ctx context.Context, username string) (bool, error) {
+	var exists bool
+	err := r.DB.QueryRowContext(ctx, constants.CheckUniqueUserName, username).Scan(&exists)
+	return exists, err
+}
