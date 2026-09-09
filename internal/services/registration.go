@@ -2,37 +2,50 @@ package services
 
 import (
 	"context"
-	"database/sql"
+	// "database/sql"
 	"errors"
-	"forum/internal/constants"
+	// "forum/internal/constants"
 	"forum/internal/uuid"
-
+	"forum/internal/repository"
+	"forum/internal/models"
 	"golang.org/x/crypto/bcrypt"
 )
+
+
+type UserService struct {
+	repo *repository.UserRepository
+}
+
+func NewUserService(repo *repository.UserRepository) *UserService {
+	return &UserService{repo: repo}
+}
 
 var ErrEmailExists = errors.New("email already exists")
 var ErrUsernameExists = errors.New("username already exists")
 
 // Registers a new user into the database or returns and error if username has been taken or email has already been registered.
-func Register(ctx context.Context, tx *sql.Tx, username, email, password string) (err error) {
+func (s *UserService) Register(ctx context.Context, username, email, password string) error {
 
 	// ---- email check -------
-	var emailExistsAlready bool
-	err = tx.QueryRowContext(ctx, constants.CheckUniqueEmail, email).Scan(&emailExistsAlready)
+	// var emailExistsAlready bool
+	// err = tx.QueryRowContext(ctx, constants.CheckUniqueEmail, email).Scan(&emailExistsAlready)
+	emailExists, err := s.repo.CheckEmailExists(ctx, email)
 	if err != nil {
 		return err
 	}
 
-	if emailExistsAlready {
+	if emailExists == true {
 		return ErrEmailExists
 	}
+
 	// ---- username check -------
-	var usernameExistsAlready bool
-	err = tx.QueryRowContext(ctx, constants.CheckUniqueUserName, username).Scan(&usernameExistsAlready)
+	// var usernameExistsAlready bool
+	// err = tx.QueryRowContext(ctx, constants.CheckUniqueUserName, username).Scan(&usernameExistsAlready)
+	usernameExists, err := s.repo.CheckUsernameExists(ctx, username)
 	if err != nil {
 		return err
 	}
-	if usernameExistsAlready {
+	if usernameExists == true {
 		return ErrUsernameExists
 	}
 
@@ -48,11 +61,18 @@ func Register(ctx context.Context, tx *sql.Tx, username, email, password string)
 		return err
 	}
 
-	// ---- create user -------
-	_, err = tx.ExecContext(ctx, constants.CreateUser, UUID, username, email, hashedPassword)
-	if err != nil {
-		return
+	user := &models.User{
+		ID:           UUID,
+		Username:     username,
+		Email:        email,
+		PasswordHash: string(hashedPassword),
 	}
 
-	return nil
+	// ---- create user -------
+	// _, err = tx.ExecContext(ctx, constants.CreateUser, UUID, username, email, hashedPassword)
+	// if err != nil {
+	// 	return
+	// }
+
+	return s.repo.CreateUser(ctx, user)
 }

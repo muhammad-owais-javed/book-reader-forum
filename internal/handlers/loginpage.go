@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"forum/cmd/web/apperrors"
+	"forum/internal/errors"
 	"html/template"
 	"net/http"
 )

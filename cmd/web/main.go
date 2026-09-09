@@ -1,35 +1,28 @@
 package main
 
 import (
-	"database/sql"
+
 	"log"
 	"net/http"
-	"os"
 	"time"
 
-	"forum/cmd/web/handlers"
+	"forum/internal/repository"
+	"forum/internal/services"
+	"forum/internal/handlers"
+	"forum/internal/database"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 
-	db, err := sql.Open("sqlite3", "./app.db")
+	db, err := database.InitDB("./app.db", "./schema.sql")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf(">> ERROR: Database initialization failed: %v", err)
 	}
 	defer db.Close()
 
-	schema, err := os.ReadFile("schema.sql")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	//creating the tables
-	_, err = db.Exec(string(schema))
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Println(">> INFO: Connection to Database Established!")
 
 	//
 	// ----- just to temporarily check what is inside the db -----
@@ -43,7 +36,16 @@ func main() {
 	// ----- just to temporarily check what is inside the db -----
 	//
 
-	app := &handlers.Application{DB: db}
+	userRepo := repository.NewUserRepository(db)
+	userService := services.NewUserService(userRepo)
+	sessionRepo := repository.NewSessionRepository(db)
+	sessionService := services.NewSessionService(sessionRepo)
+
+	app := &handlers.Application{
+		DB: db,
+		UserService: userService,
+		SessionService: sessionService, 
+	}
 
 	mux := app.Routes()
 
