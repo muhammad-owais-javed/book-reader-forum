@@ -62,6 +62,7 @@ func (app *Application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	tx.Commit()
 
-	http.Redirect(w, r, "/home", http.StatusSeeOther)
+	//http.Redirect(w, r, "/home", http.StatusSeeOther)
+	http.Redirect(w, r, "/forum", http.StatusSeeOther )
 
 }
