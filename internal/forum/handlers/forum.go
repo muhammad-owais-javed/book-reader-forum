@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"forum/internal/forum/services"
 	"html/template"
+	constants "forum/internal/constants"
  )
 
 
@@ -79,7 +80,7 @@ func (h *ForumHandler) CreatePost(w http.ResponseWriter, r *http.Request ) {
 		http.Error(w, "Unauthorized: User ID not found in context", http.StatusUnauthorized )
 		return
 	}
-	
+
 	err = h.PostService.CreatePost(ctx, userID, title, content)
 	if err != nil {
 		http.Error(w, "Failed to create post", http.StatusInternalServerError )
