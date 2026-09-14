@@ -1,5 +1,11 @@
 package constants
 
+type ContextKey string
+
+const (
+	UserIDKey ContextKey = "userID"
+)
+
 const MinUsernameLength = 3
 const MinPasswordLength = 12
 const SessionExpiry = 1440 // minutes until session expires

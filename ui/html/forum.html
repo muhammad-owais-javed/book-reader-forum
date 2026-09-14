@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Literary Lions Forum</title>
+</head>
+<body>
+    <h1>Welcome to the Literary Lions Forum!</h1>
+    
+    <!-- create  new post -->
+    <div style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px;">
+        <h2>Create a New Post</h2>
+        <form action="/forum" method="POST">
+            <div>
+                <label for="title">Title:</label>  
+
+                <input type="text" id="title" name="title" required style="width: 300px;">
+            </div>
+              
+
+            <div>
+                <label for="content">Content:</label>  
+
+                <textarea id="content" name="content" rows="5" required style="width: 300px;"></textarea>
+            </div>
+              
+
+            <button type="submit">Post</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <!-- existing posts -->
+    <h2>Recent Discussions</h2>
+    {{if .}}
+        {{range .}}
+            <div style="border: 1px solid #eee; padding: 10px; margin-bottom: 10px;">
+                <h3>{{.Title}}</h3>
+                <p>{{.Content}}</p>
+                <small>Posted at: {{.CreatedAt.Format "Jan 02, 2006 15:04"}}</small>
+            </div>
+        {{end}}
+    {{else}}
+        <p>No posts yet. BFirst to start a discussion!</p>
+    {{end}}
+
+</body>
+</html>
