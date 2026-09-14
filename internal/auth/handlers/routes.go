@@ -22,5 +22,9 @@ func (app *Application) Routes() *http.ServeMux {
 		withAuthentication(w, r, app.HomePageHandler, app)
 	})
 
+	mux.HandleFunc("/forum", func(w http.ResponseWriter, r *http.Request ) {
+		withAuthentication(w, r, app.Forum.HelloWorld, app)
+	})
+
 	return mux
 }
