@@ -43,7 +43,10 @@ func main() {
 	sessionRepo := repository.NewSessionRepository(db)
 	sessionService := services.NewSessionService(sessionRepo)
 
-	forumHandler := forumHandlers.NewForumHandler()
+	
+	postRepo := forumRepository.NewPostRepository(db)
+	postService := forumServices.NewPostService(postRepo)
+	forumHandler := forumHandlers.NewForumHandler(postService)
 
 
 	app := &handlers.Application{
