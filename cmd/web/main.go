@@ -12,6 +12,8 @@ import (
 	"forum/internal/database"
 
 	forumHandlers "forum/internal/forum/handlers"
+	forumRepository "forum/internal/forum/repository"
+	forumServices "forum/internal/forum/services"
 
 	_ "github.com/mattn/go-sqlite3"
 )
