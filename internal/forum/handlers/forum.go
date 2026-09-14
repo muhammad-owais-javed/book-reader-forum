@@ -2,9 +2,9 @@ package handlers
 
 import (
 	
-	"fmt"
 	"net/http"
 	"forum/internal/forum/services"
+	"html/template"
  )
 
 
