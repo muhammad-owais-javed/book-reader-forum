@@ -22,6 +22,13 @@ func NewForumHandler(postService *services.PostService) *ForumHandler {
 }
 
 func (h *ForumHandler) ViewForum(w http.ResponseWriter, r *http.Request ) {
+	
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed )
+		return
+	}
+
+	
 	ctx := r.Context()
 	
 	posts, err := h.PostService.GetAllPosts(ctx)
@@ -30,9 +37,19 @@ func (h *ForumHandler) ViewForum(w http.ResponseWriter, r *http.Request ) {
 		return
 	}
 
+	// Parsing html
+	tmpl, err := template.ParseFiles("./ui/html/forum.html")
+	if err != nil {
+		http.Error(w, "Failed to load template", http.StatusInternalServerError )
+		return
+	}
+
 	// Just print the number of posts for testing!
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte(fmt.Sprintf("Welcome to the Forum! There are %d posts.", len(posts))))
+	// w.Header().Set("Content-Type", "text/plain")
+	// w.Write([]byte(fmt.Sprintf("Welcome to the Forum! There are %d posts.", len(posts))))
+
+	tmpl.Execute(w, posts)
+
 }
 
 
