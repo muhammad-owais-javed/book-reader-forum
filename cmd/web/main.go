@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"forum/internal/repository"
-	"forum/internal/services"
-	"forum/internal/handlers"
+	"forum/internal/auth/repository"
+	"forum/internal/auth/services"
+	"forum/internal/auth/handlers"
 	"forum/internal/database"
 
 	_ "github.com/mattn/go-sqlite3"

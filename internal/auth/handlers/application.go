@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"database/sql"
-	"forum/internal/services"
+	"forum/internal/auth/services"
 )
 
 type Application struct {
