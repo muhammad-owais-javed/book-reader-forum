@@ -32,3 +32,14 @@ func (r *SessionRepository) GetSessionExpiry(ctx context.Context, sessionID stri
 	return expiresAt, err
 
 }
+
+
+func (r *SessionRepository) GetSessionDetails(ctx context.Context, sessionID string) (string, string, error) {
+	var userID, expiresAt string
+	
+	query := `SELECT user_id, expires_at FROM sessions WHERE id = ?`
+
+	err := r.DB.QueryRowContext(ctx, query, sessionID).Scan(&userID, &expiresAt)
+	
+	return userID, expiresAt, err
+}
