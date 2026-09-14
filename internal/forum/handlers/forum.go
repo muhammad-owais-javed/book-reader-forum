@@ -70,9 +70,16 @@ func (h *ForumHandler) CreatePost(w http.ResponseWriter, r *http.Request ) {
 	content := r.FormValue("content")
 
 	// TODO: We need the REAL logged-in user ID here!
-	userID := "dummy-user-id" 
+	//userID := "dummy-user-id" 
 
 	ctx := r.Context()
+
+	userID, ok := ctx.Value(constants.UserIDKey).(string)
+	if !ok || userID == "" {
+		http.Error(w, "Unauthorized: User ID not found in context", http.StatusUnauthorized )
+		return
+	}
+	
 	err = h.PostService.CreatePost(ctx, userID, title, content)
 	if err != nil {
 		http.Error(w, "Failed to create post", http.StatusInternalServerError )
