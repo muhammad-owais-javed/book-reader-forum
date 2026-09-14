@@ -47,22 +47,45 @@ func (s *SessionService) ValidateSession(ctx context.Context, sessionID string) 
 	// var expiresAt string
 	// err := tx.QueryRowContext(ctx, constants.GetExpiryTime, sessionID).Scan(&expiresAt)
 	
-	expiresAt, err := s.repo.GetSessionExpiry(ctx, sessionID)
-
+	userID, expiresAt, err := s.repo.GetSessionDetails(ctx, sessionID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return false, nil 
+			return "", nil // Session not found
 		}
-		return false, err 
+		return "", err // Database error
 	}
 
-	expiry, err := time.Parse(time.RFC3339, expiresAt) // expiresAt is stored in YYYY-MM-DD HH:MM:SS format but Scan reads it to RCF3339
+	expiry, err := time.Parse(time.RFC3339, expiresAt)
 	if err != nil {
-		return false, err
+
+		expiry, err = time.Parse("2006-01-02 15:04:05", expiresAt)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	if expiry.Before(time.Now()) {
-		return false, nil
+		return "", nil // Session expired
 	}
-	return true, nil
+
+	return userID, nil
+
+	// expiresAt, err := s.repo.GetSessionExpiry(ctx, sessionID)
+
+	// if err != nil {
+	// 	if errors.Is(err, sql.ErrNoRows) {
+	// 		return false, nil 
+	// 	}
+	// 	return false, err 
+	// }
+
+	// expiry, err := time.Parse(time.RFC3339, expiresAt) // expiresAt is stored in YYYY-MM-DD HH:MM:SS format but Scan reads it to RCF3339
+	// if err != nil {
+	// 	return false, err
+	// }
+
+	// if expiry.Before(time.Now()) {
+	// 	return false, nil
+	// }
+	// return true, nil
 }
