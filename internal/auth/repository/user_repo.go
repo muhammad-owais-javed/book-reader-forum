@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"forum/internal/constants"
-	"forum/internal/models"
+	"forum/internal/auth/models"
 )
 
 type UserRepository struct {

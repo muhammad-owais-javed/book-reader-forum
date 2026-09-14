@@ -6,10 +6,14 @@ import (
 	"net/http"
 	"time"
 
-	"forum/internal/repository"
-	"forum/internal/services"
-	"forum/internal/handlers"
+	"forum/internal/auth/repository"
+	"forum/internal/auth/services"
+	"forum/internal/auth/handlers"
 	"forum/internal/database"
+
+	forumHandlers "forum/internal/forum/handlers"
+	forumRepository "forum/internal/forum/repository"
+	forumServices "forum/internal/forum/services"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -41,10 +45,18 @@ func main() {
 	sessionRepo := repository.NewSessionRepository(db)
 	sessionService := services.NewSessionService(sessionRepo)
 
+	
+	postRepo := forumRepository.NewPostRepository(db)
+	postService := forumServices.NewPostService(postRepo)
+	forumHandler := forumHandlers.NewForumHandler(postService)
+
+
 	app := &handlers.Application{
 		DB: db,
 		UserService: userService,
 		SessionService: sessionService, 
+
+		Forum:          forumHandler,
 	}
 
 	mux := app.Routes()

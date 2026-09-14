@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"forum/internal/constants"
-	"forum/internal/repository"
+	"forum/internal/auth/repository"
 	"forum/internal/uuid"
 	"time"
 )

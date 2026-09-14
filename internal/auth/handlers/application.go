@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"database/sql"
-	"forum/internal/services"
+	"forum/internal/auth/services"
+
+	forumHandlers "forum/internal/forum/handlers"
 )
 
 type Application struct {
@@ -10,5 +12,6 @@ type Application struct {
 
 	UserService *services.UserService
 	SessionService *services.SessionService
+	Forum          *forumHandlers.ForumHandler
 
 }

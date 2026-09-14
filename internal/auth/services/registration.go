@@ -6,8 +6,8 @@ import (
 	"errors"
 	// "forum/internal/constants"
 	"forum/internal/uuid"
-	"forum/internal/repository"
-	"forum/internal/models"
+	"forum/internal/auth/repository"
+	"forum/internal/auth/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
