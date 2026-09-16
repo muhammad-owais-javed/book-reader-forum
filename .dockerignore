@@ -1,0 +1,5 @@
+.git
+.gitignore
+app.db
+app.db-journal
+README.md
