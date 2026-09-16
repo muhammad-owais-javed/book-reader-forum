@@ -11,3 +11,11 @@ type Post struct {
 	Content   string
 	CreatedAt time.Time
 }
+
+type Comment struct {
+	ID        string
+	PostID    string
+	UserID    string
+	Content   string
+	CreatedAt time.Time
+}
