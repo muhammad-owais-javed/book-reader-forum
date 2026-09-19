@@ -32,6 +32,14 @@ func (app *Application) Routes() *http.ServeMux {
 		}
 	})
 
+	mux.HandleFunc("/comments", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			withAuthentication(w, r, app.Forum.CreateComment, app)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
 	
 	return mux
 }

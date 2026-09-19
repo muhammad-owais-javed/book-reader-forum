@@ -21,3 +21,27 @@ func (r *CommentRepository) CreateComment(ctx context.Context, comment *models.C
 
 	return err
 }
+
+func (r *CommentRepository) GetCommentsByPostID(ctx context.Context, postID string) ([]models.Comment, error) {
+	query := `SELECT id, post_id, user_id, content, created_at FROM comments WHERE post_id = ? ORDER BY created_at DESC`
+
+	rows, err := r.db.QueryContext(ctx, query, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var comments []models.Comment
+	for rows.Next() {
+		var comment models.Comment
+		err := rows.Scan(&comment.ID, &comment.PostID, &comment.UserID, &comment.Content, &comment.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		comments = append(comments, comment)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return comments, nil
+}

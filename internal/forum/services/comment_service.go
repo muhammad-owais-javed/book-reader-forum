@@ -39,3 +39,8 @@ func (s *CommentService) CreateComment(ctx context.Context, userID string, postI
 
 	return s.repo.CreateComment(ctx, comment)
 }
+
+func (s *CommentService) GetCommentsByPostID(ctx context.Context, postID string) ([]models.Comment, error) {
+	
+	return s.repo.GetCommentsByPostID(ctx, postID)
+}

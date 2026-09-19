@@ -10,6 +10,7 @@ type Post struct {
 	Title     string
 	Content   string
 	CreatedAt time.Time
+	Comments  []Comment
 }
 
 type Comment struct {
