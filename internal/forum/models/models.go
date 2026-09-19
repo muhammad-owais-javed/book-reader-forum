@@ -17,6 +17,7 @@ type Comment struct {
 	ID        string
 	PostID    string
 	UserID    string
+	Username  string
 	Content   string
 	CreatedAt time.Time
 }
