@@ -19,13 +19,21 @@ func (r *PostRepository) CreatePost(ctx context.Context, post *models.Post) erro
 	query := `INSERT INTO posts (id, user_id, title, content) VALUES (?, ?, ?, ?)`
 
 	_, err := r.DB.ExecContext(ctx, query, post.ID, post.UserID, post.Title, post.Content)
-	
+
 	return err
 }
 
 func (r *PostRepository) GetAllPosts(ctx context.Context) ([]*models.Post, error) {
 
-	query := `SELECT id, user_id, title, content, created_at FROM posts ORDER BY created_at DESC`
+	//query := `SELECT id, user_id, title, content, created_at FROM posts ORDER BY created_at DESC`
+
+	query := `
+		SELECT p.id, p.user_id, u.username, p.title, p.content, p.created_at
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		ORDER BY p.created_at DESC
+	`
+
 	rows, err := r.DB.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
@@ -36,14 +44,14 @@ func (r *PostRepository) GetAllPosts(ctx context.Context) ([]*models.Post, error
 	var posts []*models.Post
 
 	for rows.Next() {
-		
+
 		p := &models.Post{}
-		err := rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Content, &p.CreatedAt)
-		
+		err := rows.Scan(&p.ID, &p.UserID, &p.AuthorName, &p.Title, &p.Content, &p.CreatedAt)
+
 		if err != nil {
 			return nil, err
 		}
-		
+
 		posts = append(posts, p)
 
 	}
