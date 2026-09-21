@@ -28,7 +28,6 @@ func (h *ForumHandler) ViewForum(w http.ResponseWriter, r *http.Request ) {
 		return
 	}
 
-	
 	ctx := r.Context()
 	
 	posts, err := h.PostService.GetAllPosts(ctx)
@@ -44,6 +43,14 @@ func (h *ForumHandler) ViewForum(w http.ResponseWriter, r *http.Request ) {
 			return
 		}
 		posts[i].Comments = comments
+
+		likeCount, dislikeCount, err := h.PostReactionService.GetReactionCounts(ctx, posts[i].ID)
+		if err != nil {
+			http.Error(w, "Failed to load reactions", http.StatusInternalServerError)
+			return
+		}
+		posts[i].LikeCount = likeCount
+		posts[i].DislikeCount = dislikeCount
 	}
 	// Parsing html
 	tmpl, err := template.ParseFiles("./ui/html/forum.html")

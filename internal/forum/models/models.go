@@ -12,6 +12,8 @@ type Post struct {
 	Content   string
 	CreatedAt time.Time
 	Comments  []Comment
+	LikeCount    int
+	DislikeCount int
 }
 
 type Comment struct {

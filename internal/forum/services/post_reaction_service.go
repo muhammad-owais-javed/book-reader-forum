@@ -31,3 +31,7 @@ func (s *PostReactionService) ToggleReaction(ctx context.Context, userID string,
 	// user switched from like to dislike or other way around
 	return s.repo.UpdateReaction(ctx, userID, postID, isLike)
 }
+
+func (s *PostReactionService) GetReactionCounts(ctx context.Context, postID string) (int, int, error) {
+	return s.repo.GetReactionCounts(ctx, postID)
+}

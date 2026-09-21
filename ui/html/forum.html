@@ -43,14 +43,14 @@
                     <form action="/post-reaction" method="POST" style="display: inline;">
                         <input type="hidden" name="post_id" value="{{.ID}}">
                         <button type="submit" name="reaction" value="like">
-                            👍
+                            👍 {{.LikeCount}}
                         </button>
                     </form>
 
                     <form action="/post-reaction" method="POST" style="display: inline;">
                         <input type="hidden" name="post_id" value="{{.ID}}">
                         <button type="submit" name="reaction" value="dislike">
-                            👎
+                            👎 {{.DislikeCount}}
                         </button>
                     </form>
                 </div>               
