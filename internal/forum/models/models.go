@@ -11,4 +11,14 @@ type Post struct {
 	AuthorName string
 	Content   string
 	CreatedAt time.Time
+	Comments  []Comment
+}
+
+type Comment struct {
+	ID        string
+	PostID    string
+	UserID    string
+	Username  string
+	Content   string
+	CreatedAt time.Time
 }

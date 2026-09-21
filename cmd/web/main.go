@@ -48,7 +48,11 @@ func main() {
 	
 	postRepo := forumRepository.NewPostRepository(db)
 	postService := forumServices.NewPostService(postRepo)
-	forumHandler := forumHandlers.NewForumHandler(postService)
+
+	commentRepo := forumRepository.NewCommentRepository(db)
+	commentService := forumServices.NewCommentService(commentRepo)
+
+	forumHandler := forumHandlers.NewForumHandler(postService, commentService)
 
 
 	app := &handlers.Application{
