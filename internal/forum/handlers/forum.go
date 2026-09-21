@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	
 	"net/http"
 	"forum/internal/forum/services"
 	"html/template"
@@ -10,16 +9,15 @@ import (
 
 
 type ForumHandler struct {
-
 	PostService *services.PostService
 	CommentService *services.CommentService
-
+	PostReactionService *services.PostReactionService
 }
 
 
-func NewForumHandler(postService *services.PostService, commentService *services.CommentService) *ForumHandler {
+func NewForumHandler(postService *services.PostService, commentService *services.CommentService, postReactionService *services.PostReactionService) *ForumHandler {
 	
-	return &ForumHandler{PostService: postService, CommentService: commentService}
+	return &ForumHandler{PostService: postService, CommentService: commentService, PostReactionService: postReactionService}
 	//return &ForumHandler{}
 }
 
@@ -129,6 +127,42 @@ func (h *ForumHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	http.Redirect(w, r, "/forum", http.StatusSeeOther)
+}
+
+func (h *ForumHandler) TogglePostReaction(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Bad request", http.StatusBadRequest)
+		return
+	}
+	postID := r.FormValue("post_id")
+	reaction := r.FormValue("reaction")
+	ctx := r.Context()
+	userID, ok := ctx.Value(constants.UserIDKey).(string)
+	if !ok || userID == "" {
+		http.Error(w, "Unauthorized: User ID not found in context", http.StatusUnauthorized)
+		return
+	}
+	var isLike bool
+	switch reaction {
+	case "like":
+		isLike = true
+	case "dislike":
+		isLike = false
+	default:
+		http.Error(w, "Invalid reaction", http.StatusBadRequest)
+		return
+	}
+	err = h.PostReactionService.ToggleReaction(ctx, userID, postID, isLike)
+	if err != nil {
+		http.Error(w, "Failed to update reaction", http.StatusInternalServerError)
+		return
+	}
 	http.Redirect(w, r, "/forum", http.StatusSeeOther)
 }
 

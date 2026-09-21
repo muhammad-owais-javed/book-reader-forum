@@ -52,7 +52,10 @@ func main() {
 	commentRepo := forumRepository.NewCommentRepository(db)
 	commentService := forumServices.NewCommentService(commentRepo)
 
-	forumHandler := forumHandlers.NewForumHandler(postService, commentService)
+	postReactionRepo := forumRepository.NewPostReactionRepository(db)
+	postReactionService := forumServices.NewPostReactionService(postReactionRepo)
+
+	forumHandler := forumHandlers.NewForumHandler(postService, commentService, postReactionService)
 
 
 	app := &handlers.Application{

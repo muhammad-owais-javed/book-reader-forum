@@ -22,3 +22,9 @@ type Comment struct {
 	Content   string
 	CreatedAt time.Time
 }
+
+type PostReaction struct {
+	UserID string
+	PostID string
+	IsLike bool
+}
