@@ -5,6 +5,7 @@ import (
 	"forum/internal/forum/services"
 	"html/template"
 	constants "forum/internal/constants"
+	"encoding/json"
  )
 
 
@@ -35,6 +36,8 @@ func (h *ForumHandler) ViewForum(w http.ResponseWriter, r *http.Request ) {
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError )
 		return
 	}
+
+	userID, _ := ctx.Value(constants.UserIDKey).(string)
 	// adding the comments to the post struct
 	for i := range posts {
 		comments, err := h.CommentService.GetCommentsByPostID(ctx, posts[i].ID)
@@ -44,6 +47,7 @@ func (h *ForumHandler) ViewForum(w http.ResponseWriter, r *http.Request ) {
 		}
 		posts[i].Comments = comments
 
+		// this part is to show the amount of like and dislikes per post
 		likeCount, dislikeCount, err := h.PostReactionService.GetReactionCounts(ctx, posts[i].ID)
 		if err != nil {
 			http.Error(w, "Failed to load reactions", http.StatusInternalServerError)
@@ -51,6 +55,20 @@ func (h *ForumHandler) ViewForum(w http.ResponseWriter, r *http.Request ) {
 		}
 		posts[i].LikeCount = likeCount
 		posts[i].DislikeCount = dislikeCount
+
+		// this part is to mark if the active user reacted to the post
+		reaction, err := h.PostReactionService.GetReaction(ctx, userID, posts[i].ID)
+		if err != nil {
+			http.Error(w, "Failed to load user reaction", http.StatusInternalServerError)
+			return
+		}
+		if reaction != nil {
+			if reaction.IsLike {
+				posts[i].UserLiked = true
+			} else {
+				posts[i].UserDisliked = true
+			}
+		}
 	}
 	// Parsing html
 	tmpl, err := template.ParseFiles("./ui/html/forum.html")
@@ -110,31 +128,48 @@ func (h *ForumHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
-
 	postID := r.FormValue("post_id")
 	content := r.FormValue("content")
-
 	ctx := r.Context()
-
 	userID, ok := ctx.Value(constants.UserIDKey).(string)
 	if !ok || userID == "" {
 		http.Error(w, "Unauthorized: User ID not found in context", http.StatusUnauthorized)
 		return
 	}
-
 	err = h.CommentService.CreateComment(ctx, userID, postID, content)
 	if err != nil {
 		http.Error(w, "Failed to create comment", http.StatusInternalServerError)
 		return
 	}
-
-	http.Redirect(w, r, "/forum", http.StatusSeeOther)
+	comments, err := h.CommentService.GetCommentsByPostID(ctx, postID)
+	if err != nil {
+		http.Error(w, "Failed to load comments", http.StatusInternalServerError)
+		return
+	}
+	if len(comments) == 0 {
+		http.Error(w, "Comment was not found", http.StatusInternalServerError)
+		return
+	}
+	newComment := comments[0]
+	response := struct {
+		Username  string `json:"username"`
+		Content   string `json:"content"`
+		CreatedAt string `json:"createdAt"`
+	}{
+		Username:  newComment.Username,
+		Content:   newComment.Content,
+		CreatedAt: newComment.CreatedAt.Format("Jan 02, 2006 15:04"),
+	}
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 func (h *ForumHandler) TogglePostReaction(w http.ResponseWriter, r *http.Request) {
@@ -170,7 +205,39 @@ func (h *ForumHandler) TogglePostReaction(w http.ResponseWriter, r *http.Request
 		http.Error(w, "Failed to update reaction", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/forum", http.StatusSeeOther)
+	likeCount, dislikeCount, err := h.PostReactionService.GetReactionCounts(ctx, postID)
+	if err != nil {
+		http.Error(w, "Failed to load reaction counts", http.StatusInternalServerError)
+		return
+	}
+	currentReaction, err := h.PostReactionService.GetReaction(ctx, userID, postID)
+	if err != nil {
+		http.Error(w, "Failed to load user reaction", http.StatusInternalServerError)
+		return
+	}
+	userReaction := ""
+	if currentReaction != nil {
+		if currentReaction.IsLike {
+			userReaction = "like"
+		} else {
+			userReaction = "dislike"
+		}
+	}
+	response := struct {
+		LikeCount    int    `json:"likeCount"`
+		DislikeCount int    `json:"dislikeCount"`
+		UserReaction string `json:"userReaction"`
+	}{
+		LikeCount:    likeCount,
+		DislikeCount: dislikeCount,
+		UserReaction: userReaction,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 // func (h *ForumHandler) HelloWorld(w http.ResponseWriter, r *http.Request ) {

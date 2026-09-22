@@ -35,52 +35,50 @@
     <h2>Recent Discussions</h2>
     {{if .}}
         {{range .}}
-            <div style="border: 1px solid #eee; padding: 10px; margin-bottom: 10px;">
+            <div class="post" style="border: 1px solid #eee; padding: 10px; margin-bottom: 10px;">
                 <h3>{{.Title}}</h3>
                 <p>{{.Content}}</p>
                 <small>Posted by <strong>{{.AuthorName}}</strong> at: {{.CreatedAt.Format "Jan 02, 2006 15:04"}}</small>
-                <div style="margin-top: 10px; margin-bottom: 10px;">
-                    <form action="/post-reaction" method="POST" style="display: inline;">
+                <div class="post-reactions" data-post-id="{{.ID}}">
+                    <form action="/post-reaction" method="POST" class="reaction-form" style="display: inline;">
                         <input type="hidden" name="post_id" value="{{.ID}}">
-                        <button type="submit" name="reaction" value="like">
-                            👍 {{.LikeCount}}
+                        <button type="submit" name="reaction" value="like" class="like-button"
+                                {{if .UserLiked}}style="background-color: #b7e4c7;"{{end}}>
+                            👍 <span class="like-count">{{.LikeCount}}</span>
                         </button>
                     </form>
 
-                    <form action="/post-reaction" method="POST" style="display: inline;">
+                    <form action="/post-reaction" method="POST" class="reaction-form" style="display: inline;">
                         <input type="hidden" name="post_id" value="{{.ID}}">
-                        <button type="submit" name="reaction" value="dislike">
-                            👎 {{.DislikeCount}}
+
+                        <button type="submit" name="reaction" value="dislike" class="dislike-button"
+                                {{if .UserDisliked}}style="background-color: #f4b8b8;"{{end}}>
+                            👎 <span class="dislike-count">{{.DislikeCount}}</span>
                         </button>
                     </form>
-                </div>               
+                </div>             
                 <!-- rendering the comments -->
-                {{if .Comments}}
-                    <div style="margin-top: 10px; margin-bottom: 10px;">
-                        <strong>Comments:</strong>
+                <div class="comments-section">
+                    <strong>Comments:</strong>
+                    <div class="comments-list">
                         {{range .Comments}}
                             <div style="margin-top: 8px; padding: 8px; border-left: 3px solid #ccc;">
                                 <strong>{{.Username}}</strong>
                                 <p>{{.Content}}</p>
-                                <small> {{.CreatedAt.Format "Jan 02, 2006 15:04"}}</small>
+                                <small>{{.CreatedAt.Format "Jan 02, 2006 15:04"}}</small>
                             </div>
                         {{end}}
                     </div>
-                {{else}}
-                    <p><small>No comments yet.</small></p>
-                {{end}}
+                    {{if not .Comments}}
+                        <p class="no-comments"><small>No comments yet.</small></p>
+                    {{end}}
+                </div>
                 <hr>
                 <!-- create comment -->
-                <form action="/comments" method="POST">
+                <form action="/comments" method="POST" class="comment-form">
                     <input type="hidden" name="post_id" value="{{.ID}}">
                     <div>
-                        <textarea
-                            name="content"
-                            rows="3"
-                            placeholder="Write a comment..."
-                            required
-                            style="width: 300px;"
-                        ></textarea>
+                        <textarea name="content" rows="3" placeholder="Write a comment..." required style="width: 300px;"></textarea>
                     </div>
                     <button type="submit">Comment</button>
                 </form>
@@ -89,6 +87,83 @@
     {{else}}
         <p>No posts yet. BFirst to start a discussion!</p>
     {{end}}
+
+
+// js changes a piece of html, to prevent reload, so we are staying at the same place of the page. now applicable for reactions and comments
+<script>
+    document.querySelectorAll(".reaction-form").forEach(form => {
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const reaction = event.submitter.value;
+            formData.set("reaction", reaction);
+            try {
+                const response = await fetch("/post-reaction", {
+                    method: "POST",
+                    body: new URLSearchParams(formData)
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to update reaction");
+                }
+                const data = await response.json();
+                const reactionsBlock = form.closest(".post-reactions");
+                const likeButton = reactionsBlock.querySelector(".like-button");
+                const dislikeButton = reactionsBlock.querySelector(".dislike-button");
+                const likeCount = reactionsBlock.querySelector(".like-count");
+                const dislikeCount = reactionsBlock.querySelector(".dislike-count");
+                likeCount.textContent = data.likeCount;
+                dislikeCount.textContent = data.dislikeCount;
+                likeButton.style.backgroundColor = "";
+                dislikeButton.style.backgroundColor = "";
+                if (data.userReaction === "like") {
+                    likeButton.style.backgroundColor = "#b7e4c7";
+                }
+                if (data.userReaction === "dislike") {
+                    dislikeButton.style.backgroundColor = "#f4b8b8";
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    });
+
+    document.querySelectorAll(".comment-form").forEach(form => {
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            try {
+                const response = await fetch("/comments", {
+                    method: "POST",
+                    body: new URLSearchParams(formData)
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to create comment");
+                }
+                const data = await response.json();
+                const post = form.closest(".post");
+                const commentsList = post.querySelector(".comments-list");
+                const noComments = post.querySelector(".no-comments");
+                if (noComments) {
+                    noComments.remove();
+                }
+                const comment = document.createElement("div");
+                comment.style.marginTop = "8px";
+                comment.style.padding = "8px";
+                comment.style.borderLeft = "3px solid #ccc";
+                comment.innerHTML = `
+                    <strong>${data.username}</strong>
+                    <p>${data.content}</p>
+                    <small>${data.createdAt}</small>
+                `;
+                commentsList.prepend(comment);
+                form.reset();
+
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

@@ -35,3 +35,7 @@ func (s *PostReactionService) ToggleReaction(ctx context.Context, userID string,
 func (s *PostReactionService) GetReactionCounts(ctx context.Context, postID string) (int, int, error) {
 	return s.repo.GetReactionCounts(ctx, postID)
 }
+
+func (s *PostReactionService) GetReaction(ctx context.Context,userID string,postID string) (*models.PostReaction, error) {
+	return s.repo.GetReaction(ctx, userID, postID)
+}

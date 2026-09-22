@@ -17,7 +17,6 @@ func NewPostReactionRepository(db *sql.DB) *PostReactionRepository {
 func (r *PostReactionRepository) GetReaction(ctx context.Context, userID string, postID string) (*models.PostReaction, error) {
 	query := `SELECT user_id, post_id, is_like FROM post_reactions WHERE user_id = ? AND post_id = ?`
 	var reaction models.PostReaction
-
 	err := r.db.QueryRowContext(ctx, query, userID, postID,).Scan(&reaction.UserID, &reaction.PostID, &reaction.IsLike)
 	if err == sql.ErrNoRows {
 		return nil, nil
