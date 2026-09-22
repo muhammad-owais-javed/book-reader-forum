@@ -12,6 +12,10 @@ type Post struct {
 	Content   string
 	CreatedAt time.Time
 	Comments  []Comment
+	LikeCount    int
+	DislikeCount int
+	UserLiked    bool
+	UserDisliked bool
 }
 
 type Comment struct {
@@ -21,4 +25,10 @@ type Comment struct {
 	Username  string
 	Content   string
 	CreatedAt time.Time
+}
+
+type PostReaction struct {
+	UserID string
+	PostID string
+	IsLike bool
 }
