@@ -22,15 +22,7 @@ var Authenticated bool
 // requires user to authenticate
 func withAuthentication(w http.ResponseWriter, r *http.Request, handler http.HandlerFunc, app *Application) {
 
-	//ctx and tx necessary to call service level functions, so they are defined/added here to satisfy syntax
 	ctx := r.Context()
-
-	tx, err := app.DB.BeginTx(ctx, nil)
-	if err != nil {
-		apperrors.ServerError(w, err)
-		return
-	}
-	defer tx.Rollback()
 
 	// 1. Cookie
 	cookie, err := r.Cookie("session_id")
@@ -48,26 +40,13 @@ func withAuthentication(w http.ResponseWriter, r *http.Request, handler http.Han
 	}
 
 	if userID == "" {
-		http.Redirect(w, r, "/login", http.StatusSeeOther )
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
-	// validSession, err := app.SessionService.ValidateSession(ctx, sessionID)
-	// if err != nil {
-	// 	apperrors.ServerError(w, err)
-	// 	return
-	// }
-	// if !validSession {
-	// 	http.Redirect(w, r, "/login", http.StatusSeeOther)
-	// 	return
-	// }
-
 	ctxWithUser := context.WithValue(ctx, constants.UserIDKey, userID)
 
-
-	tx.Commit()
-
-//	handler(w, r)
+	//	handler(w, r)
 	handler(w, r.WithContext(ctxWithUser))
 
 }

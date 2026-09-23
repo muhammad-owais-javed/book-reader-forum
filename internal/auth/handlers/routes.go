@@ -18,17 +18,17 @@ func (app *Application) Routes() *http.ServeMux {
 		withTimeout(w, r, app.LoginHandler)
 	})
 
-	mux.HandleFunc("GET /home", func(w http.ResponseWriter, r *http.Request) {
-		withAuthentication(w, r, app.HomePageHandler, app)
+	mux.HandleFunc("POST /logout", func(w http.ResponseWriter, r *http.Request) {
+		withTimeout(w, r, app.LogoutHandler)
 	})
 
-	mux.HandleFunc("/forum", func(w http.ResponseWriter, r *http.Request ) {
+	mux.HandleFunc("/forum", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			withAuthentication(w, r, app.Forum.ViewForum, app )
+			withAuthentication(w, r, app.Forum.ViewForum, app)
 		} else if r.Method == http.MethodPost {
-			withAuthentication(w, r, app.Forum.CreatePost, app )
+			withAuthentication(w, r, app.Forum.CreatePost, app)
 		} else {
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed )
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
 

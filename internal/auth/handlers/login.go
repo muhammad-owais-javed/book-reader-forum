@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"errors"
-	"forum/internal/errors"
-	"forum/internal/constants"
 	"forum/internal/auth/services"
+	"forum/internal/constants"
+	apperrors "forum/internal/errors"
 	"net/http"
 	"net/mail"
 	"time"
@@ -16,12 +16,6 @@ func (app *Application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	ctx, cancel := context.WithTimeout(r.Context(), 1*time.Second)
 	defer cancel()
-
-	tx, err := app.DB.BeginTx(ctx, nil)
-	if err != nil {
-		apperrors.ServerError(w, err)
-	}
-	defer tx.Rollback()
 
 	// ------ input syntax validations --------
 	email, err := mail.ParseAddress(r.PostFormValue("email"))
@@ -60,9 +54,6 @@ func (app *Application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Value: UUID,
 	})
 
-	tx.Commit()
-
-	//http.Redirect(w, r, "/home", http.StatusSeeOther)
-	http.Redirect(w, r, "/forum", http.StatusSeeOther )
+	http.Redirect(w, r, "/forum", http.StatusSeeOther)
 
 }
