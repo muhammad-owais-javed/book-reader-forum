@@ -18,6 +18,11 @@ func (app *Application) Routes() *http.ServeMux {
 		withTimeout(w, r, app.LoginHandler)
 	})
 
+	mux.HandleFunc("GET /forgot-password", app.ForgotPasswordPageHandler)
+	mux.HandleFunc("POST /forgot-password", func(w http.ResponseWriter, r *http.Request) {
+		withTimeout(w, r, app.ForgotPasswordHandler)
+	})
+
 	mux.HandleFunc("POST /logout", func(w http.ResponseWriter, r *http.Request) {
 		withTimeout(w, r, app.LogoutHandler)
 	})
