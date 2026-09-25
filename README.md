@@ -1,3 +1,2 @@
-
-Necessities:
+Depenencies:
 go get golang.org/x/crypto/bcrypt
