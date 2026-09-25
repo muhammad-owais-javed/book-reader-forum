@@ -4,12 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"forum/internal/constants"
 	"forum/internal/auth/repository"
+	"forum/internal/constants"
 	"forum/internal/uuid"
 	"time"
 )
-
 
 type SessionService struct {
 	repo *repository.SessionRepository
@@ -32,7 +31,6 @@ func (s *SessionService) CreateSession(ctx context.Context, userID string) (stri
 	expiresAt := time.Now().Add(constants.SessionExpiry * time.Minute).Format("2006-01-02 15:04:05")
 
 	// ---- add session -------
-	// _, err = tx.ExecContext(ctx, constants.AddSession, UUID, userID, expiresAt)
 	err = s.repo.InsertSession(ctx, sessionID, userID, expiresAt)
 	if err != nil {
 		return "", err
@@ -44,9 +42,6 @@ func (s *SessionService) CreateSession(ctx context.Context, userID string) (stri
 // validates that a given session id has a valid session in the db that has not expired, returns bool
 func (s *SessionService) ValidateSession(ctx context.Context, sessionID string) (string, error) {
 
-	// var expiresAt string
-	// err := tx.QueryRowContext(ctx, constants.GetExpiryTime, sessionID).Scan(&expiresAt)
-	
 	userID, expiresAt, err := s.repo.GetSessionDetails(ctx, sessionID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -69,23 +64,16 @@ func (s *SessionService) ValidateSession(ctx context.Context, sessionID string) 
 	}
 
 	return userID, nil
+}
 
-	// expiresAt, err := s.repo.GetSessionExpiry(ctx, sessionID)
+// deletes the session with a given UUID
+func (s *SessionService) DeleteSession(ctx context.Context, sessionID string) (err error) {
 
-	// if err != nil {
-	// 	if errors.Is(err, sql.ErrNoRows) {
-	// 		return false, nil 
-	// 	}
-	// 	return false, err 
-	// }
+	// ---- delete session -------
+	err = s.repo.DeleteSession(ctx, sessionID)
+	if err != nil {
+		return err
+	}
 
-	// expiry, err := time.Parse(time.RFC3339, expiresAt) // expiresAt is stored in YYYY-MM-DD HH:MM:SS format but Scan reads it to RCF3339
-	// if err != nil {
-	// 	return false, err
-	// }
-
-	// if expiry.Before(time.Now()) {
-	// 	return false, nil
-	// }
-	// return true, nil
+	return nil
 }

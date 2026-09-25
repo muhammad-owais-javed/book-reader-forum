@@ -19,3 +19,4 @@ const GetUserIDAndPasswordByEmail = "SELECT id, password_hash FROM users WHERE e
 // ------- sessions table ---------
 const AddSession = "INSERT INTO sessions (id, user_id, expires_at) VALUES (?, ?, ?)" // expires_at syntax: YYYY-MM-DD HH:MM:SS
 const GetExpiryTime = "SELECT expires_at FROM sessions WHERE id = ?"
+const DeleteSession = "DELETE FROM sessions WHERE id = ?"

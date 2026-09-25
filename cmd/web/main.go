@@ -1,14 +1,13 @@
 package main
 
 import (
-
 	"log"
 	"net/http"
 	"time"
 
+	"forum/internal/auth/handlers"
 	"forum/internal/auth/repository"
 	"forum/internal/auth/services"
-	"forum/internal/auth/handlers"
 	"forum/internal/database"
 
 	forumHandlers "forum/internal/forum/handlers"
@@ -28,24 +27,21 @@ func main() {
 
 	log.Println(">> INFO: Connection to Database Established!")
 
-	//
 	// ----- just to temporarily check what is inside the db -----
-	//rows, _ := db.Query("SELECT * FROM users") //--
-	//defer rows.Close()                         //--
-	//for rows.Next() {                          //--
-	//	var id, username, email, passwordHash string           //--
-	//	err = rows.Scan(&id, &username, &email, &passwordHash) //--
-	//	fmt.Println(id, username, email, passwordHash)         //--
-	//} //--
+	// rows, _ := db.Query("SELECT * FROM users") //--
+	// defer rows.Close()                         //--
+	// for rows.Next() {                          //--
+	// 	var id, username, email, passwordHash string           //--
+	// 	err = rows.Scan(&id, &username, &email, &passwordHash) //--
+	// 	fmt.Println(id, username, email, passwordHash)         //--
+	// } //--
 	// ----- just to temporarily check what is inside the db -----
-	//
 
 	userRepo := repository.NewUserRepository(db)
 	userService := services.NewUserService(userRepo)
 	sessionRepo := repository.NewSessionRepository(db)
 	sessionService := services.NewSessionService(sessionRepo)
 
-	
 	postRepo := forumRepository.NewPostRepository(db)
 	postService := forumServices.NewPostService(postRepo)
 
@@ -57,13 +53,12 @@ func main() {
 
 	forumHandler := forumHandlers.NewForumHandler(postService, commentService, postReactionService)
 
-
 	app := &handlers.Application{
-		DB: db,
-		UserService: userService,
-		SessionService: sessionService, 
+		DB:             db,
+		UserService:    userService,
+		SessionService: sessionService,
 
-		Forum:          forumHandler,
+		Forum: forumHandler,
 	}
 
 	mux := app.Routes()
