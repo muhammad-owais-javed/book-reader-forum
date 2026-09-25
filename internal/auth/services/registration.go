@@ -5,12 +5,12 @@ import (
 	// "database/sql"
 	"errors"
 	// "forum/internal/constants"
-	"forum/internal/uuid"
-	"forum/internal/auth/repository"
 	"forum/internal/auth/models"
+	"forum/internal/auth/repository"
+	"forum/internal/uuid"
+
 	"golang.org/x/crypto/bcrypt"
 )
-
 
 type UserService struct {
 	repo *repository.UserRepository
@@ -28,7 +28,6 @@ func (s *UserService) Register(ctx context.Context, username, email, password st
 
 	// ---- email check -------
 	// var emailExistsAlready bool
-	// err = tx.QueryRowContext(ctx, constants.CheckUniqueEmail, email).Scan(&emailExistsAlready)
 	emailExists, err := s.repo.CheckEmailExists(ctx, email)
 	if err != nil {
 		return err
@@ -40,7 +39,6 @@ func (s *UserService) Register(ctx context.Context, username, email, password st
 
 	// ---- username check -------
 	// var usernameExistsAlready bool
-	// err = tx.QueryRowContext(ctx, constants.CheckUniqueUserName, username).Scan(&usernameExistsAlready)
 	usernameExists, err := s.repo.CheckUsernameExists(ctx, username)
 	if err != nil {
 		return err
@@ -67,12 +65,6 @@ func (s *UserService) Register(ctx context.Context, username, email, password st
 		Email:        email,
 		PasswordHash: string(hashedPassword),
 	}
-
-	// ---- create user -------
-	// _, err = tx.ExecContext(ctx, constants.CreateUser, UUID, username, email, hashedPassword)
-	// if err != nil {
-	// 	return
-	// }
 
 	return s.repo.CreateUser(ctx, user)
 }

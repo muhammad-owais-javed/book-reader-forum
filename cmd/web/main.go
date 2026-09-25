@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -28,19 +29,29 @@ func main() {
 	log.Println(">> INFO: Connection to Database Established!")
 
 	// ----- just to temporarily check what is inside the db -----
-	// rows, _ := db.Query("SELECT * FROM users") //--
-	// defer rows.Close()                         //--
-	// for rows.Next() {                          //--
-	// 	var id, username, email, passwordHash string           //--
-	// 	err = rows.Scan(&id, &username, &email, &passwordHash) //--
-	// 	fmt.Println(id, username, email, passwordHash)         //--
-	// } //--
+	rows, _ := db.Query("SELECT * FROM users") //--
+	defer rows.Close()                         //--
+	for rows.Next() {                          //--
+		var id, username, email, passwordHash string           //--
+		err = rows.Scan(&id, &username, &email, &passwordHash) //--
+		fmt.Println(id, username, email, passwordHash)         //--
+	} //--
+	fmt.Println("---------------------")
+	rows2, _ := db.Query("SELECT * FROM reset_tokens") //--
+	defer rows2.Close()                                //--
+	for rows2.Next() {                                 //--
+		var reset_token, userID, expiresAt string           //--
+		err = rows2.Scan(&reset_token, &userID, &expiresAt) //--
+		fmt.Println(reset_token, userID, expiresAt)         //--
+	} //--
 	// ----- just to temporarily check what is inside the db -----
 
 	userRepo := repository.NewUserRepository(db)
 	userService := services.NewUserService(userRepo)
 	sessionRepo := repository.NewSessionRepository(db)
 	sessionService := services.NewSessionService(sessionRepo)
+	resetTokenRepo := repository.NewResetTokenRepository(db)
+	resetTokenService := services.NewResetTokenService(resetTokenRepo, userRepo)
 
 	postRepo := forumRepository.NewPostRepository(db)
 	postService := forumServices.NewPostService(postRepo)
@@ -54,11 +65,11 @@ func main() {
 	forumHandler := forumHandlers.NewForumHandler(postService, commentService, postReactionService)
 
 	app := &handlers.Application{
-		DB:             db,
-		UserService:    userService,
-		SessionService: sessionService,
-
-		Forum: forumHandler,
+		DB:                db,
+		UserService:       userService,
+		SessionService:    sessionService,
+		ResetTokenService: resetTokenService,
+		Forum:             forumHandler,
 	}
 
 	mux := app.Routes()

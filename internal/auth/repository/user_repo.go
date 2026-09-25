@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"forum/internal/constants"
 	"forum/internal/auth/models"
+	"forum/internal/constants"
 )
 
 type UserRepository struct {
@@ -39,10 +39,21 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *models.User) erro
 }
 
 func (r *UserRepository) GetUserCredentialsByEmail(ctx context.Context, email string) (string, string, error) {
-	
+
 	var userID, hashedPassword string
-	
+
 	err := r.DB.QueryRowContext(ctx, constants.GetUserIDAndPasswordByEmail, email).Scan(&userID, &hashedPassword)
-	
+
 	return userID, hashedPassword, err
+}
+
+func (r *UserRepository) GetUserIDByEmail(ctx context.Context, email string) (string, error) {
+
+	var userID, hashedPassword string
+
+	err := r.DB.QueryRowContext(ctx, constants.GetUserIDAndPasswordByEmail, email).Scan(&userID, &hashedPassword)
+
+	_ = hashedPassword
+
+	return userID, err
 }

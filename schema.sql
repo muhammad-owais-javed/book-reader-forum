@@ -1,6 +1,6 @@
 -- Users Table
 -- NOTES:
--- for users, we use UUID to increase security and privacy
+-- for id we use UUID v4 to increase security and privacy
 -- the tradeoff is that TEXT comparisons instead of INTEGER comparisons of foreign keys in join tables are minimally slower
 CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Sessions Table
 -- NOTES:
+-- id == UUID v4
 -- DATETIME in sessions table only signals intent, still takes any TEXT
 -- YYYY-MM-DD HH:MM:SS time syntax is not enforced on db level, just suggested through naming
 CREATE TABLE IF NOT EXISTS sessions (
@@ -21,6 +22,17 @@ CREATE TABLE IF NOT EXISTS sessions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Reset Tokens Table
+-- NOTES:
+-- reset token's syntax is UUID v4
+-- DATETIME in Reset Tokens table only signals intent, still takes any TEXT
+-- YYYY-MM-DD HH:MM:SS time syntax is not enforced on db level, just suggested through naming
+CREATE TABLE IF NOT EXISTS reset_tokens (
+    reset_token TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    expires_at DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 -- Posts Table
 CREATE TABLE IF NOT EXISTS posts (
