@@ -10,8 +10,7 @@ import (
 type Application struct {
 	DB *sql.DB
 
-	UserService *services.UserService
+	UserService    *services.UserService
 	SessionService *services.SessionService
 	Forum          *forumHandlers.ForumHandler
-
 }
